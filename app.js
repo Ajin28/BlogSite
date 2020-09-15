@@ -100,6 +100,20 @@ app.put('/blogs/:id', function (req, res) {
     })
 });
 
+//DELETE route
+app.delete('/blogs/:id', function (req, res) {
+    let id = req.params.id;
+    Blog.findByIdAndRemove(id, function (err, updatedBlog) {
+        if (err) {
+            res.redirect("/blogs");
+            console.log(err);
+        }
+        else {
+            res.redirect("/blogs");
+        }
+    })
+});
+
 app.listen(process.env.PORT || 3000, function () {
     console.log("BlogSite Server has started!");
 })
