@@ -1,6 +1,7 @@
 const express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
+    methodOverride = require("method-override"),
     app = express();
 
 //APP CONFIG
@@ -10,6 +11,7 @@ mongoose.connect("mongodb://localhost:27017/BlogSite", { useNewUrlParser: true, 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
 
 //MODEL CONFIG
 const blogSchema = new mongoose.Schema({
@@ -72,6 +74,31 @@ app.get('/blogs/:id', function (req, res) {
     })
 });
 
+//EDIT route
+app.get('/blogs/:id/edit', function (req, res) {
+    Blog.findById(req.params.id, function (err, foundBlog) {
+        if (err)
+            res.redirect("/blogs")
+        else {
+            res.render("edit", { blog: foundBlog })
+        }
+    })
+});
+
+//UPDATE route
+app.put('/blogs/:id', function (req, res) {
+    let id = req.params.id;
+    let newData = req.body.blog;
+    Blog.findByIdAndUpdate(id, newData, function (err, updatedBlog) {
+        if (err) {
+            res.redirect("/blogs");
+            console.log(err);
+        }
+        else {
+            res.redirect("/blogs/" + id);
+        }
+    })
+});
 
 app.listen(process.env.PORT || 3000, function () {
     console.log("BlogSite Server has started!");
