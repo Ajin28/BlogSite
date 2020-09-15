@@ -2,16 +2,18 @@ const express = require("express"),
     bodyParser = require("body-parser"),
     mongoose = require("mongoose"),
     methodOverride = require("method-override"),
+    expressSanitizer = require("express-sanitizer"),
     app = express();
 
 //APP CONFIG
-mongoose.connect("mongodb://localhost:27017/BlogSite", { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect("mongodb://localhost:27017/BlogSite", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => { console.log("Connected to DB!") })
     .catch((err) => { console.log(err) });
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(expressSanitizer());
 
 //MODEL CONFIG
 const blogSchema = new mongoose.Schema({
@@ -54,6 +56,8 @@ app.get('/blogs/new', function (req, res) {
 
 //CREATE route
 app.post('/blogs', function (req, res) {
+    req.body.blog.body = req.sanitize(req.body.blog.body);
+    //removes all script tags in input //allows other tags like h1 strong
     Blog.create(req.body.blog, function (err, newBlog) {
         if (err) {
             console.log(err)
@@ -87,6 +91,7 @@ app.get('/blogs/:id/edit', function (req, res) {
 
 //UPDATE route
 app.put('/blogs/:id', function (req, res) {
+    req.body.blog.body = req.sanitize(req.body.blog.body);
     let id = req.params.id;
     let newData = req.body.blog;
     Blog.findByIdAndUpdate(id, newData, function (err, updatedBlog) {
