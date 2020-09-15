@@ -119,6 +119,11 @@ app.delete('/blogs/:id', function (req, res) {
     })
 });
 
+//Chart----
+app.get("/chart", function (req, res) {
+    res.render("chart")
+})
+
 app.listen(process.env.PORT || 3000, function () {
     console.log("BlogSite Server has started!");
 })
