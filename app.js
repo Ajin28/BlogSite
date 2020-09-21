@@ -6,7 +6,7 @@ const express = require("express"),
     app = express();
 
 //APP CONFIG
-mongoose.connect("mongodb://localhost:27017/BlogSite", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+mongoose.connect(process.env.DB_LINK, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => { console.log("Connected to DB!") })
     .catch((err) => { console.log(err) });
 app.set("view engine", "ejs");
