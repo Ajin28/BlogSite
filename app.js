@@ -6,7 +6,7 @@ const express = require("express"),
     app = express();
 
 //APP CONFIG
-mongoose.connect(process.env.DB_LINK, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+mongoose.connect(process.env.DB_LINK || "mongodb://127.0.0.1:27017/BlogSite", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => { console.log("Connected to DB!") })
     .catch((err) => { console.log(err) });
 app.set("view engine", "ejs");
@@ -126,7 +126,8 @@ app.get("/chart", function (req, res) {
 
 app.listen(process.env.PORT || 3000, function () {
     console.log("BlogSite Server has started!");
-})
+});
+
 
 // //extracting data named paramName
 // form get method  - req.query.paramName
